@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
 
     public float moveSpeed;
     public float rotateSpeed;
+    public float gravity = -9.8f;
     Vector3 lookDirection;
     
 
@@ -40,6 +41,7 @@ public class Player : MonoBehaviour
         mag = Mathf.Clamp(mag, 0.0f, 1.0f);
         motion.Normalize();
         motion *= mag;
+        motion = new Vector3(motion.x, motion.y + gravity, motion.z);
         motion *= moveSpeed * Time.deltaTime;
 
         // Rotation
