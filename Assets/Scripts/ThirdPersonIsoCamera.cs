@@ -82,12 +82,24 @@ public class ThirdPersonIsoCamera : MonoBehaviour
 
         for(int i = 0; i < hits.Length; i++)
         {
-            hits[i].transform.parent.GetComponent<Transparency>().MakeTransparent(true);
-
-            GameObject existingGO;
-            if(!transparentGOs.TryGetValue(hits[i].transform.parent.gameObject.name, out existingGO))
+            if (hits[i].transform.parent.name == "Building")
             {
-                transparentGOs.Add(hits[i].transform.parent.gameObject.name, hits[i].transform.parent.gameObject);
+                if (!((Building)hits[i].transform.parent.gameObject.GetComponent<Building>()).isPlayerInside)
+                {
+                    hits[i].transform.parent.GetComponent<Transparency>().MakeTransparent(true);
+
+
+                }
+
+            }
+            else
+            {
+                hits[i].transform.parent.GetComponent<Transparency>().MakeTransparent(true);
+                GameObject existingGO;
+                if (!transparentGOs.TryGetValue(hits[i].transform.parent.gameObject.name, out existingGO))
+                {
+                    transparentGOs.Add(hits[i].transform.parent.gameObject.name, hits[i].transform.parent.gameObject);
+                }
             }
         }
 
