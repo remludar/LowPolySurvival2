@@ -8,7 +8,7 @@ public class MyGameManager : MonoBehaviour
     void Start()
     {
         //SpawnRandomTrees();
-        GenerateTestTerrain();
+        //GenerateTestTerrain();
     }
 
     void SpawnRandomTrees()

@@ -44,6 +44,8 @@ public class Player : MonoBehaviour
         motion = new Vector3(motion.x, motion.y + gravity, motion.z);
         motion *= moveSpeed * Time.deltaTime;
 
+
+
         // Rotation
         lookDirection += (horizontalRaw * cameraRight) + (verticalRaw * cameraForward);
         lookDirection = Vector3.ClampMagnitude(lookDirection, 1);
@@ -52,15 +54,18 @@ public class Player : MonoBehaviour
         // Temp input handler
         if (Input.GetMouseButton(0))
         {
-            currentlyWielding.GetComponent<Hatchet>().Use();
+            //currentlyWielding.GetComponent<Hatchet>().Use();
         }
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, rotateSpeed * Time.deltaTime);
+        cc.Move(motion);
     }
 
 
     void LateUpdate()
     {
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, rotateSpeed * Time.deltaTime);
-        cc.Move(motion );
+        //transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, rotateSpeed * Time.deltaTime);
+        //cc.Move(motion);
     }
 
     void InitInventory()
