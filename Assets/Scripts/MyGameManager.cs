@@ -7,7 +7,7 @@ public class MyGameManager : MonoBehaviour
     float bounds = 50;
     void Start()
     {
-        //SpawnRandomTrees();
+        SpawnRandomTrees();
         //GenerateTestTerrain();
     }
 
