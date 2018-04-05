@@ -18,6 +18,10 @@ public class ThirdPersonCamera  : MonoBehaviour
     float rangeDistance = 5.0f;
     float currentDistance = 20.0f;
     float distanceLerpSpeed = 7.0f;
+    float meleLookAtOffsetX = 0.0f;
+    float rangeLookAtOffsetX = 1.0f;
+    float currentLookAtOffsetX = 0.0f;
+    float lookAtOffsetXLerpSpeed = 7.0f;
     float scrollSpeed = 1000.0f;
 
     Dictionary<string, GameObject> transparentGOs = new Dictionary<string, GameObject>();
@@ -84,6 +88,7 @@ public class ThirdPersonCamera  : MonoBehaviour
     void UpdatePositionAndRotationMele()
     {
         currentDistance = Mathf.Lerp(currentDistance, meleDistance, distanceLerpSpeed * Time.deltaTime);
+        currentLookAtOffsetX = Mathf.Lerp(currentLookAtOffsetX, meleLookAtOffsetX, lookAtOffsetXLerpSpeed * Time.deltaTime);
 
         //set xSpeed relative to distance so its similar regardless of the distance
         xSpeed = (20.0f / currentDistance) * 8.0f;
@@ -123,12 +128,14 @@ public class ThirdPersonCamera  : MonoBehaviour
         var motion = position - transform.position;
 
         cc.Move(motion);
-        transform.LookAt(player);
+        transform.LookAt(player.position + (transform.right * currentLookAtOffsetX));
+
     }
 
     void UpdatePositionAndRotationRanged()
     {
         currentDistance = Mathf.Lerp(currentDistance, rangeDistance, distanceLerpSpeed * Time.deltaTime);
+        currentLookAtOffsetX = Mathf.Lerp(currentLookAtOffsetX, rangeLookAtOffsetX, lookAtOffsetXLerpSpeed * Time.deltaTime);
 
         //set xSpeed relative to distance so its similar regardless of the distance
         xSpeed = (20.0f / currentDistance) * 8.0f;
@@ -162,13 +169,13 @@ public class ThirdPersonCamera  : MonoBehaviour
 
         //calculate camera position
         var rotation = Quaternion.Euler(y, x, 0);
-        var offsetPosition = new Vector3(1, 0, -currentDistance);
+        var offsetPosition = new Vector3(0, 0, -currentDistance);
         var rotatedOffsetPosition = rotation * offsetPosition;
         var position = rotatedOffsetPosition + player.position;
         var motion = position - transform.position;
 
         cc.Move(motion);
-        transform.LookAt(player.position + Vector3.right);
+        transform.LookAt(player.position + (transform.right * currentLookAtOffsetX)); 
     }
 
     float ClampAngle(float angle, float min, float max)
