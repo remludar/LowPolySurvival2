@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class MyGameManager : MonoBehaviour
 {
-    float bounds = 50;
+    float bounds = 500;
     void Start()
     {
-        SpawnRandomTrees();
-        //GenerateTestTerrain();
+        //SpawnRandomTrees();
+        GenerateTestTerrain();
     }
 
     void SpawnRandomTrees()
@@ -23,7 +23,7 @@ public class MyGameManager : MonoBehaviour
             var rotateZ = Random.Range(0.0f, 360.0f);
             string treeToSpawn = (Random.Range(0, 2) == 0) ? "Tree" : "Tree2";
             var rotation = Quaternion.LookRotation(new Vector3(rotateX, 0, rotateZ));
-            var treeGO = Instantiate(Resources.Load("Prefabs/" + treeToSpawn), new Vector3(Random.Range(-bounds, bounds), 0, Random.Range(-bounds, bounds)), rotation) as GameObject;
+            var treeGO = Instantiate(Resources.Load("Prefabs/" + treeToSpawn), new Vector3(Random.Range(0, bounds), 185, Random.Range(0, bounds)), rotation) as GameObject;
             var size = Random.Range(0.0f, 2.0f);
             treeGO.transform.localScale += new Vector3(size, size, size);
             treeGO.name = System.Guid.NewGuid().ToString();

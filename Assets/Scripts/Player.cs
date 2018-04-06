@@ -15,11 +15,13 @@ public class Player : MonoBehaviour
     public float rotateSpeed;
     public float gravity = -9.8f;
     Vector3 lookDirection;
-    
+
+    public enum State { WANDERING, MELE_TARGET, RANGED, RANGED_TARGET };
+    public State state = State.WANDERING;
 
     void Start()
     {
-        cc = GetComponent<CharacterController>();        
+        cc = GetComponent<CharacterController>();
         InitInventory();
         lookDirection = transform.forward;
     }
@@ -44,8 +46,6 @@ public class Player : MonoBehaviour
         motion = new Vector3(motion.x, motion.y + gravity, motion.z);
         motion *= moveSpeed * Time.deltaTime;
 
-
-
         // Rotation
         lookDirection += (horizontalRaw * cameraRight) + (verticalRaw * cameraForward);
         lookDirection = Vector3.ClampMagnitude(lookDirection, 1);
@@ -57,15 +57,18 @@ public class Player : MonoBehaviour
             //currentlyWielding.GetComponent<Hatchet>().Use();
         }
 
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            state = State.WANDERING;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            state = State.RANGED;
+        }
+
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, rotateSpeed * Time.deltaTime);
         cc.Move(motion);
-    }
-
-
-    void LateUpdate()
-    {
-        //transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, rotateSpeed * Time.deltaTime);
-        //cc.Move(motion);
     }
 
     void InitInventory()
