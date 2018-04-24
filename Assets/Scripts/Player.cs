@@ -8,8 +8,8 @@ public class Player : MonoBehaviour
     Vector3 motion;
     Quaternion lookRotation;
 
-    GameObject currentlyWielding;
-    Dictionary<string, GameObject> inventory;
+    InventoryItem currentlyWielding;
+    Dictionary<string, InventoryItem> inventory;
 
     public float moveSpeed;
     public float rotateSpeed;
@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         cc = GetComponent<CharacterController>();
-        InitInventory();
+        inventory = new Dictionary<string, InventoryItem>();
         lookDirection = transform.forward;
     }
 
@@ -52,11 +52,12 @@ public class Player : MonoBehaviour
         lookRotation = Quaternion.LookRotation(lookDirection);
 
         // Temp input handler
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
         {
-            //currentlyWielding.GetComponent<Hatchet>().Use();
+            currentlyWielding.Use();
         }
 
+        
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             state = State.WANDERING;
@@ -69,26 +70,40 @@ public class Player : MonoBehaviour
 
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, rotateSpeed * Time.deltaTime);
         cc.Move(motion);
+
     }
 
-    void InitInventory()
+    void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        inventory = new Dictionary<string, GameObject>();
 
-        var hatchetGO = Instantiate(Resources.Load("Prefabs/Hatchet")) as GameObject;
-        hatchetGO.name = "Hatchet";
-        AddToInventory(hatchetGO);
-        Wield(hatchetGO);
+        if (hit.transform.parent != null)
+        {
+            if (hit.transform.parent.tag == "InventoryItem")
+            {
+                var hitGO = hit.transform.parent.gameObject;
+                var rb = hitGO.GetComponent<Rigidbody>();
+                rb.useGravity = false;
+                rb.constraints = RigidbodyConstraints.FreezeAll;
+                hitGO.transform.rotation = Quaternion.identity;
+                inventory.Add(hitGO.name, hitGO.GetComponent<InventoryItem>());
+                Wield(hit.transform.parent.gameObject.GetComponent<InventoryItem>());
+            }
+        }
     }
 
-    void AddToInventory(GameObject go)
+
+
+    void AddToInventory(InventoryItem item)
     {
-        inventory.Add(go.name, go);
+        inventory.Add(item.gameObject.name, item);
     }
 
-    void Wield(GameObject go)
+    void Wield(InventoryItem item)
     {
-        currentlyWielding = go;
-        go.transform.parent = transform.Find("Right Arm");
+        currentlyWielding = item;
+        var rightHand = GameObject.Find("Right Arm").transform.Find("Right Hand");
+        item.transform.LookAt(transform.position - transform.forward * 10);
+        item.transform.position = rightHand.position + Vector3.up * 0.1f;
+        item.transform.parent = transform;
     }
 }

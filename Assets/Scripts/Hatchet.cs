@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 
-public class Hatchet : MonoBehaviour
+public class Hatchet : InventoryItem
 {
-    public void Use()
+    public override void Use()
     {
-        Debug.Log("used hatchet");
+        Debug.Log("From Hatchet " + gameObject.name);
     }
+
+    
 }

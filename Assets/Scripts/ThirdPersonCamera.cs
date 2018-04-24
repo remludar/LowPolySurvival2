@@ -122,28 +122,13 @@ public class ThirdPersonCamera  : MonoBehaviour
 
         for (int i = 0; i < hits.Length; i++)
         {
-            if (hits[i].transform.name != "Main Camera" && hits[i].transform.name != "Terrain" && hits[i].transform.name != "Plane" && hits[i].transform.name != "Player")
+            if (hits[i].transform.name != "Player")
             {
-                //Debug.Log(hits[i].transform.name);
-                //if (hits[i].transform.parent.name == "Building")
-                //{
-                //    if (!((Building)hits[i].transform.parent.gameObject.GetComponent<Building>()).isPlayerInside)
-                //    {
-                //        hits[i].transform.parent.GetComponent<Transparency>().MakeTransparent(true);
-
-
-                //    }
-
-                //}
-                //else
+                hits[i].transform.parent.GetComponent<Transparency>().MakeTransparent(true);
+                GameObject existingGO;
+                if (!transparentGOs.TryGetValue(hits[i].transform.parent.gameObject.name, out existingGO))
                 {
-                    Debug.Log(hits[i].transform.name);
-                    hits[i].transform.parent.GetComponent<Transparency>().MakeTransparent(true);
-                    GameObject existingGO;
-                    if (!transparentGOs.TryGetValue(hits[i].transform.parent.gameObject.name, out existingGO))
-                    {
-                        transparentGOs.Add(hits[i].transform.parent.gameObject.name, hits[i].transform.parent.gameObject);
-                    }
+                    transparentGOs.Add(hits[i].transform.parent.gameObject.name, hits[i].transform.parent.gameObject);
                 }
             }
         }
@@ -154,7 +139,6 @@ public class ThirdPersonCamera  : MonoBehaviour
             bool found = false;
             for (int j = 0; j < hits.Length; j++)
             {
-                Debug.Log(hits[j].transform.name);
                 if (hits[j].transform.name != "Player")
                 {
                     if (hits[j].transform.parent.name == kvp.Key)
