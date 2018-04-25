@@ -418,6 +418,7 @@ GameObject:
   - component: {fileID: 22463284}
   - component: {fileID: 22210842}
   - component: {fileID: 11499228}
+  - component: {fileID: 114885569278249600}
   m_Layer: 5
   m_Name: InventoryPanel
   m_TagString: Untagged
@@ -1153,7 +1154,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 154172}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3d0d5785fbf742c4ab072e4708c02b94, type: 3}
   m_Name: 
@@ -1947,3 +1948,14 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 188654}
   m_IsPrefabParent: 1
+--- !u!114 &114885569278249600
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 188654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 803b7185570a1d9498bfb11af9760353, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

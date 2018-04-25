@@ -18,17 +18,24 @@ public class Player : MonoBehaviour
     Dictionary<string, InventoryItem> inventory;
     GameObject inventoryGO;
 
+    GameObject mouseGO;
+
+
     #region O V E R L O A D S
     void Start()
     {
         cc = GetComponent<CharacterController>();
+        lookDirection = transform.forward;
+
         inventory = new Dictionary<string, InventoryItem>();
         inventoryGO = Instantiate(Resources.Load("Prefabs/InventoryPanel")) as GameObject;
         inventoryGO.transform.SetParent(GameObject.Find("UI").transform.Find("Canvas"));
         inventoryGO.transform.localScale = new Vector3(2,2,2);
-        inventoryGO.transform.localPosition = new Vector3(250, -125, 0);
-        inventoryGO.SetActive(false);
-        lookDirection = transform.forward;
+        inventoryGO.transform.localPosition = new Vector3(662, -227, 0);
+        //inventoryGO.SetActive(false);
+
+        mouseGO = GameObject.Find("UI").transform.Find("Canvas").transform.Find("Mouse").gameObject;
+
     }
     void Update()
     {
@@ -95,6 +102,28 @@ public class Player : MonoBehaviour
         {
             inventoryGO.SetActive(!inventoryGO.activeSelf);
         }
+
+        if (InputManager.isRMB)
+        {
+            mouseGO.SetActive(false);
+        }
+        else
+        {
+            mouseGO.SetActive(true);
+        }
+
+
+
+        //if (InputManager.isRMB)
+        //{
+        //    Cursor.visible = false;
+        //    Cursor.lockState = CursorLockMode.Locked;
+        //}
+        //else
+        //{
+        //    Cursor.visible = true;
+        //    Cursor.lockState = CursorLockMode.None;
+        //}
 
         //if (InputManager.isLMBDown)
         //{

@@ -6,6 +6,8 @@ public static class InputManager
     public static float vertical = 0.0f;
     public static float horizontalRaw = 0.0f;
     public static float verticalRaw = 0.0f;
+    public static float mouseX = 0.0f;
+    public static float mouseY = 0.0f;
 
     public static bool isLMBDown = false;
     public static bool isRMB = false;
@@ -25,6 +27,9 @@ public static class InputManager
         vertical = Input.GetAxis("Vertical");
         horizontalRaw = Input.GetAxisRaw("Horizontal");
         verticalRaw = Input.GetAxisRaw("Vertical");
+        mouseX = Input.GetAxis("Mouse X");
+        mouseY = Input.GetAxis("Mouse Y");
+
 
         isLMBDown = Input.GetMouseButtonDown(0);
         isRMB = Input.GetMouseButton(1);

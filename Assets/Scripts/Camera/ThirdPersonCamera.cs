@@ -63,17 +63,17 @@ public class ThirdPersonCamera  : MonoBehaviour
         xSpeed = (20.0f / currentDistance) * 8.0f;
 
         //allow camera movement
-        if (Input.GetMouseButton(1))
+        if (InputManager.isRMB)
         {
             //horizontal
-            x += Input.GetAxis("Mouse X") * xSpeed * currentDistance * Time.deltaTime;
+            x += InputManager.mouseX * xSpeed * currentDistance * Time.deltaTime;
 
             //vertical only lets the camera go to the ground and back up
             if (!cc.isGrounded)
-                y -= Input.GetAxis("Mouse Y") * ySpeed * Time.deltaTime;
+                y -= InputManager.mouseY * ySpeed * Time.deltaTime;
             else
             {
-                var tempY = Input.GetAxis("Mouse Y") * ySpeed * Time.deltaTime;
+                var tempY = InputManager.mouseY * ySpeed * Time.deltaTime;
                 if (tempY < 0)
                     y -= tempY;
             }
