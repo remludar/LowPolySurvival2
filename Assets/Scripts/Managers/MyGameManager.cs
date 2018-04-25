@@ -26,7 +26,7 @@ public class MyGameManager : MonoBehaviour
             var rotateZ = Random.Range(0.0f, 360.0f);
             string treeToSpawn = (Random.Range(0, 2) == 0) ? "Tree" : "Tree2";
             var rotation = Quaternion.LookRotation(new Vector3(rotateX, 0, rotateZ));
-            var treeGO = Instantiate(Resources.Load("Prefabs/" + treeToSpawn), new Vector3(Random.Range(0, xBounds), 6, Random.Range(0, zBounds)), rotation) as GameObject;
+            var treeGO = Instantiate(Resources.Load("Prefabs/Environmentals/" + treeToSpawn), new Vector3(Random.Range(0, xBounds), 6, Random.Range(0, zBounds)), rotation) as GameObject;
             var size = Random.Range(0.0f, 2.0f);
             treeGO.transform.localScale += new Vector3(size, size, size);
             treeGO.name = System.Guid.NewGuid().ToString();
@@ -81,12 +81,12 @@ public class MyGameManager : MonoBehaviour
         var rndX = Random.Range(0, 360);
         var rndY = Random.Range(0, 360);
         var rndZ = Random.Range(0, 360);
-        var hatchetGO = Instantiate(Resources.Load("Prefabs/Hatchet"), new Vector3(80, 7, 80), Quaternion.Euler(rndX, rndY, rndZ)) as GameObject;
+        var hatchetGO = Instantiate(Resources.Load("Prefabs/InventoryItems/Hatchet"), new Vector3(80, 7, 80), Quaternion.Euler(rndX, rndY, rndZ)) as GameObject;
 
         rndX = Random.Range(0, 360);
         rndY = Random.Range(0, 360);
         rndZ = Random.Range(0, 360);
-        var swordGO = Instantiate(Resources.Load("Prefabs/Sword"), new Vector3(90, 7, 70), Quaternion.Euler(rndX, rndY, rndZ)) as GameObject;
+        var swordGO = Instantiate(Resources.Load("Prefabs/InventoryItems/Sword"), new Vector3(90, 7, 70), Quaternion.Euler(rndX, rndY, rndZ)) as GameObject;
     }
 
     
