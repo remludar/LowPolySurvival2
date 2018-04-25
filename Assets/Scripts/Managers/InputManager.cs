@@ -10,6 +10,8 @@ public static class InputManager
     public static float mouseY = 0.0f;
 
     public static bool isLMBDown = false;
+    public static bool isLMB = false;
+    public static bool isLMBUp = false;
     public static bool isRMB = false;
     public static bool isSpace = false;
     public static bool isEsc = false;
@@ -32,6 +34,8 @@ public static class InputManager
 
 
         isLMBDown = Input.GetMouseButtonDown(0);
+        isLMB = Input.GetMouseButton(0);
+        isLMBUp = Input.GetMouseButtonUp(0);
         isRMB = Input.GetMouseButton(1);
         isSpace = Input.GetKeyDown(KeyCode.Space);
         isEsc = Input.GetKeyDown(KeyCode.Escape);

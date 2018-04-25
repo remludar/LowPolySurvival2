@@ -4,17 +4,14 @@ public class InventoryController : MonoBehaviour
 {
     GameObject handleGO;
     RectTransform handleRectTransform;
+    GameObject mouseGO;
 
     void Start()
     {
         handleGO = transform.Find("InventoryHandle").gameObject;
         handleRectTransform = handleGO.GetComponent<RectTransform>();
+        mouseGO = GameObject.FindGameObjectWithTag("Mouse");
     }
 
-    void Update()
-    {
-        //Vector3[] corners = new Vector3[4];
-        //handleRectTransform.GetWorldCorners(corners);
-        //Debug.Log("Handle: " + corners[0] + "," + corners[1] + "," + corners[2] + "," + corners[3]);
-    }
+   
 }

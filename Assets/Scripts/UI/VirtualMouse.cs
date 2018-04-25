@@ -12,6 +12,9 @@ public class VirtualMouse : MonoBehaviour
     Vector3 motion;
     Vector3[] corners = new Vector3[4];
 
+    bool isLMBDown = false;
+    bool isOverHandle = false;
+
     void Start()
     {
         
@@ -33,6 +36,42 @@ public class VirtualMouse : MonoBehaviour
         handleRectTransform = handleGO.GetComponent<RectTransform>();
         handleRectTransform.GetWorldCorners(handleCorners);
 
+        #region working
+        //if (inventoryGO.activeSelf)
+        //{
+        //    var rectX = handleCorners[0].x - 10;  // Dont know why I have to subtract 10 here
+        //    var rectWidth = handleCorners[3].x - handleCorners[0].x;
+        //    var rectHeight = handleCorners[1].y - handleCorners[0].y;
+        //    var rectY = handleCorners[0].y - rectHeight;
+        //    var handleRect = new Rect(rectX, rectY, rectWidth, rectHeight);
+
+        //    if (handleRect.Contains(new Vector2(corners[0].x, corners[0].y)))
+        //    {
+        //        if (Input.GetMouseButton(0))
+        //        {
+        //            isDragging = true;
+        //        }
+        //        else
+        //        {
+        //            isDragging = false;
+        //        }
+        //    }
+        //}
+        //else
+        //{
+        //    isDragging = false;
+        //}
+        #endregion
+
+        if (InputManager.isLMBDown)
+        {
+            isLMBDown = true;
+        }
+        if (InputManager.isLMBUp)
+        {
+            isLMBDown = false;
+        }
+
         if (inventoryGO.activeSelf)
         {
             var rectX = handleCorners[0].x - 10;  // Dont know why I have to subtract 10 here
@@ -41,21 +80,18 @@ public class VirtualMouse : MonoBehaviour
             var rectY = handleCorners[0].y - rectHeight;
             var handleRect = new Rect(rectX, rectY, rectWidth, rectHeight);
 
-            if (handleRect.Contains(new Vector2(corners[0].x, corners[0].y)))
+            if (!isLMBDown)
             {
-                if (Input.GetMouseButton(0))
-                {
-                    isDragging = true;
-                }
-                else
-                {
-                    isDragging = false;
-                }
+                isOverHandle = handleRect.Contains(new Vector2(corners[0].x, corners[0].y));
             }
-        }
-        else
-        {
-            isDragging = false;
+
+            if (isOverHandle)
+            {
+                if (isLMBDown)
+                    isDragging = true;
+                else
+                    isDragging = false;
+            }
         }
 
     }
@@ -63,7 +99,9 @@ public class VirtualMouse : MonoBehaviour
     void LateUpdate()
     {
         if (isDragging)
+        {
             inventoryGO.transform.position += motion * speed * Time.deltaTime;
+        }
     }
 
 
