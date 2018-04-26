@@ -32,7 +32,7 @@ public class Player : MonoBehaviour
         inventoryGO.transform.SetParent(GameObject.Find("UI").transform.Find("Canvas"));
         inventoryGO.transform.localScale = new Vector3(2,2,2);
         inventoryGO.transform.localPosition = new Vector3(662, -227, 0);
-        //inventoryGO.SetActive(false);
+        inventoryGO.SetActive(false);
 
         mouseGO = GameObject.Find("UI").transform.Find("Canvas").transform.Find("Mouse").gameObject;
 
