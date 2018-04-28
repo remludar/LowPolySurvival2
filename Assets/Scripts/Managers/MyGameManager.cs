@@ -11,6 +11,7 @@ public class MyGameManager : MonoBehaviour
     {
         SpawnRandomTrees();
         //GenerateTestTerrain();
+        LootManager.Init();
         SpawnInItems();
     }
 
@@ -78,15 +79,16 @@ public class MyGameManager : MonoBehaviour
 
     void SpawnInItems()
     {
-        var rndX = Random.Range(0, 360);
-        var rndY = Random.Range(0, 360);
-        var rndZ = Random.Range(0, 360);
-        var hatchetGO = Instantiate(Resources.Load("Prefabs/InventoryItems/Hatchet"), new Vector3(80, 7, 80), Quaternion.Euler(rndX, rndY, rndZ)) as GameObject;
-
-        rndX = Random.Range(0, 360);
-        rndY = Random.Range(0, 360);
-        rndZ = Random.Range(0, 360);
-        var swordGO = Instantiate(Resources.Load("Prefabs/InventoryItems/Sword"), new Vector3(90, 7, 70), Quaternion.Euler(rndX, rndY, rndZ)) as GameObject;
+        for (int i = 0; i < 2; i++)
+        {
+            var rndXPos = Random.Range(80, 90);
+            var rndZPos = Random.Range(60, 80);
+            var rndXRot = Random.Range(0, 360);
+            var rndYRot = Random.Range(0, 360);
+            var rndZRot = Random.Range(0, 360);
+            var lootGO = Instantiate(Resources.Load("Prefabs/Loot/Loot"), new Vector3(rndXPos, 8, rndZPos), Quaternion.Euler(rndXRot, rndYRot, rndZRot)) as GameObject;
+        }
+       
     }
 
     

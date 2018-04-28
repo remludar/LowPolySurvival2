@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -15,7 +17,7 @@ public class Player : MonoBehaviour
     Vector3 lookDirection;
 
     InventoryItem currentlyWielding;
-    Dictionary<string, InventoryItem> inventory;
+    Dictionary<Guid, InventoryItem> inventory;
     GameObject inventoryGO;
 
     GameObject mouseGO;
@@ -27,7 +29,7 @@ public class Player : MonoBehaviour
         cc = GetComponent<CharacterController>();
         lookDirection = transform.forward;
 
-        inventory = new Dictionary<string, InventoryItem>();
+        inventory = new Dictionary<Guid, InventoryItem>();
         inventoryGO = Instantiate(Resources.Load("Prefabs/InventoryPanel")) as GameObject;
         inventoryGO.transform.SetParent(GameObject.Find("UI").transform.Find("Canvas"));
         inventoryGO.transform.localScale = new Vector3(2,2,2);
@@ -43,21 +45,18 @@ public class Player : MonoBehaviour
         ProcessMovementRotationInput();
         ProcessAdditionalInput();
     }
-    void OnControllerColliderHit(ControllerColliderHit hit)
+
+    void OnCollisionEnter(Collision collision)
     {
-        // This awkward parent object check will go away when I import real models from blender
-        if (hit.transform.parent != null)
+        if (collision.transform.tag == "Loot")
         {
-            if (hit.transform.parent.tag == "InventoryItem")
-            {
-                var hitGO = hit.transform.parent.gameObject;
-                var rb = hitGO.GetComponent<Rigidbody>();
-                rb.useGravity = false;
-                rb.constraints = RigidbodyConstraints.FreezeAll;
-                hitGO.transform.rotation = Quaternion.identity;
-                inventory.Add(hitGO.name, hitGO.GetComponent<InventoryItem>());
-                Wield(hit.transform.parent.gameObject.GetComponent<InventoryItem>());
-            }
+            Destroy(collision.gameObject);
+            var loot = LootManager.GetLoot();
+
+            //Somehow add this to my inventory and show it in the inventory UI in game
+            AddToInventory(loot);
+            
+            Debug.Log("You found a " + loot.GetName() + "!");
         }
     }
     #endregion
@@ -132,15 +131,29 @@ public class Player : MonoBehaviour
     }
     void AddToInventory(InventoryItem item)
     {
-        inventory.Add(item.gameObject.name, item);
+        //really should have a static inventory manager or something to let me do this.
+        var inventoryGO = GameObject.Find("UI").transform.Find("Canvas").transform.Find("InventoryPanel(Clone)").transform.Find("Inventory").gameObject;
+        var totalSpaces = inventoryGO.transform.childCount;
+        var nextEmptySpace = "InventorySlot" + inventory.Count;
+        Debug.Log(nextEmptySpace);
+
+        var slot0 = inventoryGO.transform.Find(nextEmptySpace).gameObject;
+        var color = slot0.GetComponent<Image>().color;
+        slot0.GetComponent<Image>().color = new Color(color.r, color.g, color.b, 1.0f);
+        var path = "Sprites/" + item.GetName() + "Icon";
+        slot0.GetComponent<Image>().overrideSprite = Resources.Load<Sprite>(path);
+
+        inventory.Add(item.GetUniqueID(), item);
+
+
     }
     void Wield(InventoryItem item)
     {
         currentlyWielding = item;
         var rightHand = GameObject.Find("Right Arm").transform.Find("Right Hand");
-        item.transform.LookAt(transform.position - transform.forward * 10);
-        item.transform.position = rightHand.position + Vector3.up * 0.1f;
-        item.transform.parent = transform;
+        //item.transform.LookAt(transform.position - transform.forward * 10);
+        //item.transform.position = rightHand.position + Vector3.up * 0.1f;
+        //item.transform.parent = transform;
     }
     #endregion
 }
