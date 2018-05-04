@@ -7,7 +7,7 @@ public class ThirdPersonCamera  : MonoBehaviour
     CharacterController cc;
 
     public Transform player;
-    Player playerScript;
+    Player_OLD playerScript;
 
     float x = 0.0f;
     float y = 0.0f;
@@ -36,7 +36,7 @@ public class ThirdPersonCamera  : MonoBehaviour
 
         cc = GetComponent<CharacterController>();
 
-        playerScript = player.gameObject.GetComponent<Player>();
+        playerScript = player.gameObject.GetComponent<Player_OLD>();
 
         var angles = transform.eulerAngles;
         x = angles.y;
@@ -95,12 +95,12 @@ public class ThirdPersonCamera  : MonoBehaviour
 
     void CheckPlayerState()
     {
-        if (playerScript.state == Player.State.WANDERING)
+        if (playerScript.state == Player_OLD.State.WANDERING)
         {
             targetDistance = meleDistance;
             targetLookAtOffsetX = meleLookAtOffsetX;
         }
-        else if (playerScript.state == Player.State.RANGED)
+        else if (playerScript.state == Player_OLD.State.RANGED)
         {
             targetDistance = rangeDistance;
             targetLookAtOffsetX = rangeLookAtOffsetX;
