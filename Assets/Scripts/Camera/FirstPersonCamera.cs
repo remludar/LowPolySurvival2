@@ -21,6 +21,12 @@ public class FirstPersonCamera : MonoBehaviour
 
     void Update()
     {
+        if (ViewBobbing)
+            UpdateViewBobbing();
+    }
+
+    void UpdateViewBobbing()
+    {
         if (InputManager.isLeftShift)
         {
             bobbingAmountX = bobbingRunAmountX;
@@ -32,12 +38,6 @@ public class FirstPersonCamera : MonoBehaviour
             bobbingAmountY = bobbingWalkAmountY;
         }
 
-        if (ViewBobbing)
-            UpdateViewBobbing();
-    }
-
-    void UpdateViewBobbing()
-    {
         float wavesliceX = 0.0f;
         float wavesliceY = 0.0f;
 

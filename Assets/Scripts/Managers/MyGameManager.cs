@@ -22,17 +22,6 @@ public class MyGameManager : MonoBehaviour
         {
             for(int x = 0; x < width; x++)
             {
-                #region Grassy Mountains
-                //var octaves = 16;
-                //var deltaFrequency = 0.5f;
-                //var deltaAmplitude = 0.25f;
-                //var deltaScale = 1.0f;
-
-
-                //var frequency = 0.9f;
-                //var amplitude = 0.8f;
-                //var scale = (1024.0f / (width * height)) * 0.0033f;
-
                 var octaves = 16;
                 var deltaFrequency = 3f;
                 var deltaAmplitude = 0.25f;
@@ -51,7 +40,6 @@ public class MyGameManager : MonoBehaviour
                     amplitude *= deltaAmplitude;
                     scale *= deltaScale;
                 }
-                #endregion
             }
         }
 

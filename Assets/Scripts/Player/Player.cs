@@ -47,10 +47,15 @@ public class Player : MonoBehaviour
         motion *= moveSpeed * Time.deltaTime;
 
         var rotationX = transform.localEulerAngles.y + InputManager.mouseX * rotXSpeed;
-        //transform.localEulerAngles = new Vector3(0, rotationX, 0);
 
         rotationY += InputManager.mouseY * rotYSpeed;
-        transform.localEulerAngles = new Vector3(-rotationY, rotationX, 0);
+        rotationY = Mathf.Clamp(rotationY, -90.0f, 90.0f);
+
+        //rotate body horizontally only
+        transform.localEulerAngles = new Vector3(0, rotationX, 0);
+
+        //rotate arms vertically only
+        transform.Find("Arms").localEulerAngles = new Vector3(-rotationY, 0, 0);
 
         cc.Move(motion);
 

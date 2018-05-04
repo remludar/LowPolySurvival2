@@ -8,9 +8,9 @@ public class IslandTerrainMesh : MonoBehaviour
     MeshFilter meshFilter;
     MeshCollider meshCollider;
 
-    const int width = 120;
-    const int depth = 120;
-    float[,] heightMap = new float[width + 1, depth + 1];
+    const int WIDTH = 127;
+    const int DEPTH = 127;
+    float[,] heightMap = new float[WIDTH + 1, DEPTH + 1];
 
     List<Vector3> verts = new List<Vector3>();
     List<int> tris = new List<int>();
@@ -19,7 +19,6 @@ public class IslandTerrainMesh : MonoBehaviour
 
     void Start()
     {
-        //GenerateHeightMap();
         meshRenderer = gameObject.GetComponent<MeshRenderer>();
         meshFilter = gameObject.GetComponent<MeshFilter>();
         meshCollider = gameObject.GetComponent<MeshCollider>();
@@ -33,9 +32,9 @@ public class IslandTerrainMesh : MonoBehaviour
 
     void GenerateHeightMap()
     {
-        for (int y = 0; y < depth + 1; y++)
+        for (int y = 0; y < DEPTH + 1; y++)
         {
-            for (int x = 0; x < width + 1; x++)
+            for (int x = 0; x < WIDTH + 1; x++)
             {
                 var octaves = 16;
                 var deltaFrequency = 3f;
@@ -47,10 +46,9 @@ public class IslandTerrainMesh : MonoBehaviour
                 var amplitude = 10.8f;
                 var scale = 2.0f;
 
-
                 for (int i = 0; i < octaves; i++)
                 {
-                    heightMap[x, y] += Mathf.PerlinNoise(((float)x / (float)width) * frequency, ((float)y / (float)depth) * frequency) * amplitude * scale;
+                    heightMap[x, y] += Mathf.PerlinNoise(((float)x / (float)WIDTH) * frequency, ((float)y / (float)DEPTH) * frequency) * amplitude * scale;
                     frequency *= deltaFrequency;
                     amplitude *= deltaAmplitude;
                     scale *= deltaScale;
@@ -60,9 +58,9 @@ public class IslandTerrainMesh : MonoBehaviour
     }
     void GenerateMesh()
     {
-        for (int z = 0; z < depth; z++)
+        for (int z = 0; z < DEPTH; z++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < WIDTH; x++)
             {
                 verts.Add(new Vector3(x + 0, heightMap[x + 0, z + 0], z + 0));
                 verts.Add(new Vector3(x + 0, heightMap[x + 0, z + 1], z + 1));
