@@ -98,7 +98,10 @@ public class Chunk
         for (int i = 0; i < grids.Length; i++)
         {
             numTris = mc.Polygonize(grids[i], MapTerrain.isolevel, triangles);
-
+            if(numTris > 0)
+            {
+                int r = 0;
+            }
             for (int j = 0; j < numTris; j++)
             {
                 verts.Add(triangles[j].p[0]);
