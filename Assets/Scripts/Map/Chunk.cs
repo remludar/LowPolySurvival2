@@ -1,72 +1,124 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections.Generic;
+using System;
+using System.Threading;
+using System.Collections;
 
-public class Chunk : MonoBehaviour
+public class Chunk
 {
-    Mesh mesh;
-    MeshRenderer meshRenderer;
+    public const int WIDTH =  16; //16
+    public const int DEPTH =  16; //16
+    public const int HEIGHT = 16;  //16
+
+    public GameObject go;
     MeshFilter meshFilter;
-    MeshCollider meshCollider;
+    MeshRenderer meshRenderer;
 
     List<Vector3> verts = new List<Vector3>();
     List<int> tris = new List<int>();
     List<Vector2> uvs = new List<Vector2>();
-    int numSquares = 0;
+    int numTris = 0;
 
-    void Start()
+    Vector3 noisePosition;
+
+    MarchingCubes.GridCell[] grids;
+    MarchingCubes.Triangle[] triangles;
+    MarchingCubes mc;
+    int triCount;
+
+    public Chunk(GameObject gameObject, Vector3 noiseVector)
     {
-        meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        meshFilter = gameObject.AddComponent<MeshFilter>();
-        meshCollider = gameObject.AddComponent<MeshCollider>();
-        mesh = meshFilter.mesh;
-        var uvMat = Resources.Load<Material>("Materials/Dark Green");
-        meshRenderer.material = uvMat;
+        go = gameObject;
+        go.transform.parent = GameObject.Find("Terrain").transform;
+        meshFilter = go.AddComponent<MeshFilter>();
+        meshRenderer = go.AddComponent<MeshRenderer>();
+        meshRenderer.material = Resources.Load<Material>("Materials/Dark Green");
+        noisePosition = new Vector3(noiseVector.x / WIDTH, noiseVector.y / HEIGHT, noiseVector.z / DEPTH);
+        grids = new MarchingCubes.GridCell[WIDTH * HEIGHT * DEPTH];
 
-        GenerateMesh();
+        mc = new MarchingCubes();
+        triangles = new MarchingCubes.Triangle[5];
+        triCount = 0;
+
+        //Debug.Log(go.name);
+        
+        for (int z = 0; z < DEPTH; z++)
+        {
+            for (int y = 0; y < HEIGHT; y++)
+            {
+                for (int x = 0; x < WIDTH; x++)
+                {
+                    var gridCell = new MarchingCubes.GridCell();
+                    gridCell.p[0] = new Vector3(x + 0, y + 0, z + 1);
+                    gridCell.p[1] = new Vector3(x + 1, y + 0, z + 1);
+                    gridCell.p[2] = new Vector3(x + 1, y + 0, z + 0);
+                    gridCell.p[3] = new Vector3(x + 0, y + 0, z + 0);
+                    gridCell.p[4] = new Vector3(x + 0, y + 1, z + 1);
+                    gridCell.p[5] = new Vector3(x + 1, y + 1, z + 1);
+                    gridCell.p[6] = new Vector3(x + 1, y + 1, z + 0);
+                    gridCell.p[7] = new Vector3(x + 0, y + 1, z + 0);
+
+                    var noiseIndexX = (int)noisePosition.x * WIDTH + x;
+                    var noiseIndexY = (int)noisePosition.y * HEIGHT + y;
+                    var noiseIndexZ = (int)noisePosition.z * DEPTH + z;
+
+                    //debug
+                    if(go.transform.position == new Vector3(-16, 0, 0))
+                    {
+                        int r = 0;
+                    }
+                    //debug
+
+                    gridCell.val[0] = MapTerrain.noise[(noiseIndexX + 0) + (noiseIndexY + 0) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 1) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    gridCell.val[1] = MapTerrain.noise[(noiseIndexX + 1) + (noiseIndexY + 0) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 1) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    gridCell.val[2] = MapTerrain.noise[(noiseIndexX + 1) + (noiseIndexY + 0) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 0) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    gridCell.val[3] = MapTerrain.noise[(noiseIndexX + 0) + (noiseIndexY + 0) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 0) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    gridCell.val[4] = MapTerrain.noise[(noiseIndexX + 0) + (noiseIndexY + 1) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 1) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    gridCell.val[5] = MapTerrain.noise[(noiseIndexX + 1) + (noiseIndexY + 1) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 1) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    gridCell.val[6] = MapTerrain.noise[(noiseIndexX + 1) + (noiseIndexY + 1) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 0) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    gridCell.val[7] = MapTerrain.noise[(noiseIndexX + 0) + (noiseIndexY + 1) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 0) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+
+                    grids[x + y * WIDTH + z * HEIGHT * WIDTH] = gridCell;
+
+                }
+            }
+        }
     }
-
-
-    public void GenerateMesh()
+    public void Clear()
     {
-        mesh.Clear();
         verts.Clear();
         tris.Clear();
         uvs.Clear();
-        numSquares = 0;
-
-        for (int z = 0; z < WorldMap.CHUNK_DEPTH; z++)
+        numTris = 0;
+        triCount = 0;
+        meshFilter.mesh.Clear();
+    }
+    public void GenerateTerrain()
+    {
+        for (int i = 0; i < grids.Length; i++)
         {
-            for (int x = 0; x < WorldMap.CHUNK_WIDTH; x++)
+            numTris = mc.Polygonize(grids[i], MapTerrain.isolevel, triangles);
+
+            for (int j = 0; j < numTris; j++)
             {
-                int mapX = (int)transform.position.x + x;
-                int mapZ = (int)transform.position.z + z;
+                verts.Add(triangles[j].p[0]);
+                verts.Add(triangles[j].p[1]);
+                verts.Add(triangles[j].p[2]);
 
-                verts.Add(new Vector3(x + 0, WorldMap.heightMap[mapX + 0, mapZ + 0], z + 0));
-                verts.Add(new Vector3(x + 0, WorldMap.heightMap[mapX + 0, mapZ + 1], z + 1));
-                verts.Add(new Vector3(x + 1, WorldMap.heightMap[mapX + 1, mapZ + 1], z + 1));
-                verts.Add(new Vector3(x + 1, WorldMap.heightMap[mapX + 1, mapZ + 0], z + 0));
+                tris.Add(triCount * 3 + 0);
+                tris.Add(triCount * 3 + 1);
+                tris.Add(triCount * 3 + 2);
 
-                tris.Add(4 * numSquares + 0);
-                tris.Add(4 * numSquares + 1);
-                tris.Add(4 * numSquares + 2);
-                tris.Add(4 * numSquares + 2);
-                tris.Add(4 * numSquares + 3);
-                tris.Add(4 * numSquares + 0);
-
-                uvs.Add(new Vector2(0, 0));
-                uvs.Add(new Vector2(1, 0));
-                uvs.Add(new Vector2(1, 1));
-                uvs.Add(new Vector2(0, 1));
-
-                numSquares++;
+                triCount++;
             }
         }
-
+    }
+    public void Render()
+    {
+        var mesh = meshFilter.mesh;
         mesh.vertices = verts.ToArray();
         mesh.triangles = tris.ToArray();
         mesh.uv = uvs.ToArray();
         mesh.RecalculateNormals();
-        meshCollider.sharedMesh = mesh;
     }
-
 }

@@ -3,17 +3,19 @@ public class FirstPersonCamera : MonoBehaviour
 {
     public bool ViewBobbing = true;
 
+
     float timerX = 0.0f;
-    float bobbingSpeedX = 0.06f;
-    float bobbingWalkAmountX = 0.2f;
-    float bobbingRunAmountX = 0.4f;
+    float bobbingSpeedX = 0.0f;
+    float bobbingWalkAmountX = 0.0f;
+    float bobbingRunAmountX = 0.0f;
     float bobbingAmountX;
     float midpointX = 0f;
 
     float timerY = 0.0f;
-    float bobbingSpeedY = 0.12f;
-    float bobbingWalkAmountY = 0.1f;
-    float bobbingRunAmountY = 0.2f;
+    float bobbingWalkSpeedY = 0.125f;
+    float bobbingRunSpeedY = 0.125f * 1.1f;
+    float bobbingWalkAmountY = 0.02f;
+    float bobbingRunAmountY = 0.02f * 2f;
     float bobbingAmountY;
     float midpointY = 0f;
 
@@ -55,8 +57,16 @@ public class FirstPersonCamera : MonoBehaviour
         {
             wavesliceX = Mathf.Sin(timerX);
             wavesliceY = Mathf.Sin(timerY);
-            timerX = timerX + bobbingSpeedX;
-            timerY = timerY + bobbingSpeedY;
+            if (InputManager.isLeftShift)
+            {
+                //timerX = timerX + bobbingRunSpeedX;
+                timerY = timerY + bobbingRunSpeedY;
+            }
+            else
+            {
+                timerY = timerY + bobbingWalkSpeedY;
+            }
+            
             if (timerX > Mathf.PI * 2)
             {
                 timerX = timerX - (Mathf.PI * 2);

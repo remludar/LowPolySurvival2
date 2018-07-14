@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         cc = GetComponent<CharacterController>();
+        GetComponent<MeshRenderer>().enabled = false;
     }
 
     void Update()
@@ -29,7 +30,13 @@ public class Player : MonoBehaviour
 
     void ProcessMovementRotationInput()
     {
-        motion = (InputManager.horizontal * transform.right) + (InputManager.vertical * transform.forward) ;
+        motion = (InputManager.horizontal * transform.right) + (InputManager.vertical * transform.forward);
+
+        if (InputManager.isE)
+            motion += Vector3.up;
+
+        if (InputManager.isQ)
+            motion += Vector3.down;
 
         if (InputManager.isLeftShift)
             moveSpeed = runSpeed;

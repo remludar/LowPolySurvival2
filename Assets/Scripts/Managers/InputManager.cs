@@ -22,6 +22,8 @@ public static class InputManager
     public static bool isLeftAlt = false;
     public static bool isLeftCtrl = false;
     public static bool isI = false;
+    public static bool isE = false;
+    public static bool isQ = false;
 
     public static void Update()
     {
@@ -46,5 +48,7 @@ public static class InputManager
         isLeftAlt = Input.GetKey(KeyCode.LeftAlt);
         isLeftCtrl = Input.GetKey(KeyCode.LeftControl);
         isI = Input.GetKeyDown(KeyCode.I);
+        isE = Input.GetKey(KeyCode.E);
+        isQ = Input.GetKey(KeyCode.Q);
     }
 }
