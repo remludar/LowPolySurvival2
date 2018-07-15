@@ -25,6 +25,7 @@ public class Chunk
     MarchingCubes.Triangle[] triangles;
     MarchingCubes mc;
     int triCount;
+    public bool canRender = true;
 
     public Chunk(GameObject gameObject, Vector3 noiseVector)
     {
@@ -123,5 +124,7 @@ public class Chunk
         mesh.triangles = tris.ToArray();
         mesh.uv = uvs.ToArray();
         mesh.RecalculateNormals();
+        canRender = false;
+        
     }
 }

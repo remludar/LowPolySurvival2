@@ -277,7 +277,8 @@ public class MapTerrain
     {
         foreach(var kvp in activeChunks)
         {
-            kvp.Value.Render();
+            if(kvp.Value.canRender)
+                kvp.Value.Render();
         }
     }
 
