@@ -62,14 +62,25 @@ public class Chunk
                     var noiseIndexY = (int)noisePosition.y + y;
                     var noiseIndexZ = (int)noisePosition.z + z;
 
-                    gridCell.val[0] = MapTerrain.noise[(noiseIndexX + 0) + (noiseIndexY + 0) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 1) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
-                    gridCell.val[1] = MapTerrain.noise[(noiseIndexX + 1) + (noiseIndexY + 0) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 1) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
-                    gridCell.val[2] = MapTerrain.noise[(noiseIndexX + 1) + (noiseIndexY + 0) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 0) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
-                    gridCell.val[3] = MapTerrain.noise[(noiseIndexX + 0) + (noiseIndexY + 0) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 0) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
-                    gridCell.val[4] = MapTerrain.noise[(noiseIndexX + 0) + (noiseIndexY + 1) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 1) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
-                    gridCell.val[5] = MapTerrain.noise[(noiseIndexX + 1) + (noiseIndexY + 1) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 1) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
-                    gridCell.val[6] = MapTerrain.noise[(noiseIndexX + 1) + (noiseIndexY + 1) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 0) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
-                    gridCell.val[7] = MapTerrain.noise[(noiseIndexX + 0) + (noiseIndexY + 1) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 0) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    #region old 1d array way doesn't quite work right
+                    //gridCell.val[0] = MapTerrain.noise[(noiseIndexX + 0) + (noiseIndexY + 0) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 1) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    //gridCell.val[1] = MapTerrain.noise[(noiseIndexX + 1) + (noiseIndexY + 0) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 1) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    //gridCell.val[2] = MapTerrain.noise[(noiseIndexX + 1) + (noiseIndexY + 0) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 0) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    //gridCell.val[3] = MapTerrain.noise[(noiseIndexX + 0) + (noiseIndexY + 0) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 0) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    //gridCell.val[4] = MapTerrain.noise[(noiseIndexX + 0) + (noiseIndexY + 1) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 1) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    //gridCell.val[5] = MapTerrain.noise[(noiseIndexX + 1) + (noiseIndexY + 1) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 1) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    //gridCell.val[6] = MapTerrain.noise[(noiseIndexX + 1) + (noiseIndexY + 1) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 0) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    //gridCell.val[7] = MapTerrain.noise[(noiseIndexX + 0) + (noiseIndexY + 1) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 0) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
+                    #endregion
+
+                    gridCell.val[0] = MapTerrain.noise[(noiseIndexX + 0), (noiseIndexY + 0), (noiseIndexZ + 1)];
+                    gridCell.val[1] = MapTerrain.noise[(noiseIndexX + 1), (noiseIndexY + 0), (noiseIndexZ + 1)];
+                    gridCell.val[2] = MapTerrain.noise[(noiseIndexX + 1), (noiseIndexY + 0), (noiseIndexZ + 0)];
+                    gridCell.val[3] = MapTerrain.noise[(noiseIndexX + 0), (noiseIndexY + 0), (noiseIndexZ + 0)];
+                    gridCell.val[4] = MapTerrain.noise[(noiseIndexX + 0), (noiseIndexY + 1), (noiseIndexZ + 1)];
+                    gridCell.val[5] = MapTerrain.noise[(noiseIndexX + 1), (noiseIndexY + 1), (noiseIndexZ + 1)];
+                    gridCell.val[6] = MapTerrain.noise[(noiseIndexX + 1), (noiseIndexY + 1), (noiseIndexZ + 0)];
+                    gridCell.val[7] = MapTerrain.noise[(noiseIndexX + 0), (noiseIndexY + 1), (noiseIndexZ + 0)];
 
                     grids[x + y * WIDTH + z * HEIGHT * WIDTH] = gridCell;
 

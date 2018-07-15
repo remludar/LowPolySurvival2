@@ -5,24 +5,25 @@ using UnityEngine;
 public class MapTerrain
 {
     //render of chunks each direction
-    public const int RENDER_DISTANCE = 1; //16
+    public const int RENDER_DISTANCE = 2; //16
     public const int CENTERED_WIDTH = (2 * RENDER_DISTANCE) + 1;
     public const int CENTERED_HEIGHT = (2 * RENDER_DISTANCE) + 1;
     public const int CENTERED_DEPTH = (2 * RENDER_DISTANCE) + 1;
     
-    public const int WIDTH =  CENTERED_WIDTH  + 2;  //40  
-    public const int DEPTH =  CENTERED_HEIGHT + 2;  //40
-    public const int HEIGHT = CENTERED_DEPTH  + 2;  //16
+    public const int WIDTH =  CENTERED_WIDTH  + 1;  //40  
+    public const int DEPTH =  CENTERED_DEPTH  + 1;  //40
+    public const int HEIGHT = CENTERED_HEIGHT + 1;  //16
 
     //noise
     //public const int NOISE_WIDTH =  ((2 * (2 * RENDER_DISTANCE)) + 1) * Chunk.WIDTH + 1;
     //public const int NOISE_HEIGHT = ((2 * (2 * RENDER_DISTANCE)) + 1) * Chunk.HEIGHT + 1;
     //public const int NOISE_DEPTH =  ((2 * (2 * RENDER_DISTANCE)) + 1) * Chunk.DEPTH + 1;
     public const int NOISE_WIDTH = WIDTH * Chunk.WIDTH + 1;
-    public const int NOISE_HEIGHT = HEIGHT * Chunk.HEIGHT + 1;
     public const int NOISE_DEPTH = DEPTH * Chunk.DEPTH + 1;
+    public const int NOISE_HEIGHT = HEIGHT * Chunk.HEIGHT + 1;
 
-    public static double[] noise = new double[NOISE_WIDTH * NOISE_HEIGHT * NOISE_DEPTH];
+    //public static double[] noise = new double[NOISE_WIDTH * NOISE_HEIGHT * NOISE_DEPTH];
+    public static double[,,] noise = new double[NOISE_WIDTH, NOISE_HEIGHT, NOISE_DEPTH];
     public static double isolevel = 0.5;
     private static double min = double.MaxValue;
     private static double max = double.MinValue;
@@ -107,46 +108,49 @@ public class MapTerrain
                     #endregion
 
                     #region example with overhangs
-                    //var octaves = 3;
-                    //var deltaFrequency = 0.5;
-                    //var deltaAmplitude = 2.0;
-                    //var deltaScale = 1.0;
+                    var octaves = 3;
+                    var deltaFrequency = 0.5;
+                    var deltaAmplitude = 2.0;
+                    var deltaScale = 1.0;
 
-                    //var frequency = 2.0;
-                    //var amplitude = 10.0;
-                    //var scale = 5.0;
+                    var frequency = 2.0;
+                    var amplitude = 10.0;
+                    var scale = 5.0;
 
-                    //double sample = 0.0;
-                    //for (int i = 0; i < octaves; i++)
-                    //{
+                    double sample = 0.0;
+                    for (int i = 0; i < octaves; i++)
+                    {
 
-                    //    sample += simplexNoise.eval(((double)x / (double)Chunk.WIDTH) * frequency,
-                    //                                ((double)y / (double)Chunk.HEIGHT) * frequency,
-                    //                                ((double)z / (double)Chunk.DEPTH) * frequency) * amplitude * scale - y * 3f;
+                        sample += simplexNoise.eval(((double)x / (double)Chunk.WIDTH) * frequency,
+                                                    ((double)y / (double)Chunk.HEIGHT) * frequency,
+                                                    ((double)z / (double)Chunk.DEPTH) * frequency) * amplitude * scale - y * 3f;
 
-                    //    frequency *= deltaFrequency;
-                    //    amplitude *= deltaAmplitude;
-                    //    scale *= deltaScale;
-                    //}
+                        frequency *= deltaFrequency;
+                        amplitude *= deltaAmplitude;
+                        scale *= deltaScale;
+                    }
+
+                    if (sample < min) min = sample;
+                    if (sample > max) max = sample;
+
+                    //var index = x + y * NOISE_WIDTH + z * NOISE_HEIGHT * NOISE_WIDTH;
+                    //noise[index] = sample;
+                    noise[x, y, z] = sample;
+
+                    #endregion
+
+                    #region giant cube example
+                    //double sample = 1.0;
+
+                    //if (x == 0 || x == NOISE_WIDTH - 1 || y == 0 || y == NOISE_HEIGHT - 1 || z == 0 || z == NOISE_DEPTH - 1)
+                    //    sample = -1.0;
 
                     //if (sample < min) min = sample;
                     //if (sample > max) max = sample;
 
                     //var index = x + y * NOISE_WIDTH + z * NOISE_HEIGHT * NOISE_WIDTH;
-                    //noise[index] = sample;
-                    #endregion
-
-                    #region giant cube example
-                    double sample = 1.0;
-
-                    if (x == 0 || x == NOISE_WIDTH - 1 || y == 0 || y == NOISE_HEIGHT - 1 || z == 0 || z == NOISE_DEPTH - 1)
-                        sample = -1.0;
-
-                    if (sample < min) min = sample;
-                    if (sample > max) max = sample;
-
-                    var index = x + y * NOISE_WIDTH + z * NOISE_HEIGHT * NOISE_WIDTH;
-                    noise[index] = sample;
+                    ////noise[index] = sample;
+                    //noise[x, y, z] = sample;
                     #endregion
 
                     #region flat
@@ -178,7 +182,8 @@ public class MapTerrain
                 for (int x = 0; x < NOISE_WIDTH; x++)
                 {
                     var index = x + y * NOISE_WIDTH + z * NOISE_HEIGHT * NOISE_WIDTH;
-                    noise[index] = (noise[index] - average) / range * normalizeValue;
+                    //noise[index] = (noise[index] - average) / range * normalizeValue;
+                    noise[x, y, z] = (noise[x, y, z] - average) / range * normalizeValue;
                 }
             }
         }
@@ -192,8 +197,11 @@ public class MapTerrain
         bool flipped = false;
         playerPosition = GameObject.FindGameObjectWithTag("Player").transform.position;
         int playerX = (int)(playerPosition.x / Chunk.WIDTH);
-        int playerY = (int)playerPosition.y / Chunk.HEIGHT;
+        if (playerPosition.x < 0) playerX--;
         int playerZ = (int)(playerPosition.z / Chunk.DEPTH);
+        if (playerPosition.z < 0) playerZ--;
+        int playerY = (int)playerPosition.y / Chunk.HEIGHT;
+
 
         int y = playerY;
         while (y > -Y + RENDER_DISTANCE)
@@ -216,7 +224,7 @@ public class MapTerrain
                 var noiseZ = (z + playerZ + (NOISE_DEPTH - 1) / Chunk.DEPTH / 2) * Chunk.DEPTH;
                 var newChunkNoisePosition = new Vector3(noiseX, noiseY, noiseZ);
 
-                if (!ChunkExists(newChunkPosition))// && NoiseExists(newChunkNoisePosition))
+                if (!ChunkExists(newChunkPosition) && NoiseExists(newChunkNoisePosition))
                 {
                     var go = new GameObject(newChunkPosition.ToString());
                     go.transform.position = newChunkPosition;
@@ -224,6 +232,7 @@ public class MapTerrain
                     var chunk = new Chunk(go, newChunkNoisePosition);
                     activeChunks.Add(go.transform.position, chunk);
                     chunk.GenerateTerrain();
+                    Debug.Log("generated");
                 }
 
                 if ((x == z) ||
@@ -259,8 +268,10 @@ public class MapTerrain
     }
     private static bool NoiseExists(Vector3 position)
     {
-        var index = ((position.x * Chunk.WIDTH + 1) + (position.y * Chunk.HEIGHT + 1) * Chunk.WIDTH) + ((position.z * Chunk.DEPTH + 1) * Chunk.HEIGHT * Chunk.WIDTH);
-        return index < noise.Length;
+        bool xInBounds = position.x < noise.GetLength(0) - 1 && position.x >= 0;
+        bool yInBounds = position.y < noise.GetLength(1) - 1 && position.y >= 0;
+        bool zInBounds = position.z < noise.GetLength(2) - 1 && position.z >= 0;
+        return xInBounds && yInBounds && zInBounds;
     }
     private static void RenderChunks()
     {
@@ -272,8 +283,11 @@ public class MapTerrain
 
     public static void Update()
     {
-        GenerateChunks();
-        RenderChunks();
+        //if (InputManager.isSpace)
+        {
+            GenerateChunks();
+            RenderChunks();
+        }
     }
     #endregion
 
