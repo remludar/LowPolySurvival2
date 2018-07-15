@@ -33,7 +33,7 @@ public class Chunk
         meshFilter = go.AddComponent<MeshFilter>();
         meshRenderer = go.AddComponent<MeshRenderer>();
         meshRenderer.material = Resources.Load<Material>("Materials/Dark Green");
-        noisePosition = new Vector3(noiseVector.x / WIDTH, noiseVector.y / HEIGHT, noiseVector.z / DEPTH);
+        noisePosition = new Vector3(noiseVector.x, noiseVector.y, noiseVector.z);
         grids = new MarchingCubes.GridCell[WIDTH * HEIGHT * DEPTH];
 
         mc = new MarchingCubes();
@@ -41,7 +41,7 @@ public class Chunk
         triCount = 0;
 
         //Debug.Log(go.name);
-        
+
         for (int z = 0; z < DEPTH; z++)
         {
             for (int y = 0; y < HEIGHT; y++)
@@ -58,16 +58,9 @@ public class Chunk
                     gridCell.p[6] = new Vector3(x + 1, y + 1, z + 0);
                     gridCell.p[7] = new Vector3(x + 0, y + 1, z + 0);
 
-                    var noiseIndexX = (int)noisePosition.x * WIDTH + x;
-                    var noiseIndexY = (int)noisePosition.y * HEIGHT + y;
-                    var noiseIndexZ = (int)noisePosition.z * DEPTH + z;
-
-                    //debug
-                    if(go.transform.position == new Vector3(-16, 0, 0))
-                    {
-                        int r = 0;
-                    }
-                    //debug
+                    var noiseIndexX = (int)noisePosition.x + x;
+                    var noiseIndexY = (int)noisePosition.y + y;
+                    var noiseIndexZ = (int)noisePosition.z + z;
 
                     gridCell.val[0] = MapTerrain.noise[(noiseIndexX + 0) + (noiseIndexY + 0) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 1) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
                     gridCell.val[1] = MapTerrain.noise[(noiseIndexX + 1) + (noiseIndexY + 0) * MapTerrain.NOISE_WIDTH + (noiseIndexZ + 1) * MapTerrain.NOISE_HEIGHT * MapTerrain.NOISE_WIDTH];
@@ -98,10 +91,6 @@ public class Chunk
         for (int i = 0; i < grids.Length; i++)
         {
             numTris = mc.Polygonize(grids[i], MapTerrain.isolevel, triangles);
-            if(numTris > 0)
-            {
-                int r = 0;
-            }
             for (int j = 0; j < numTris; j++)
             {
                 verts.Add(triangles[j].p[0]);

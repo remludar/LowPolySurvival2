@@ -9,6 +9,11 @@ public class MyGameManager : MonoBehaviour
         //GenerateTestForest();
     }
 
+    void Update()
+    {
+        MapTerrain.Update();
+    }
+
     #region Debug
     void GenerateTestForest()
     {
