@@ -4,20 +4,25 @@ using UnityEngine;
 
 public class MapTerrain
 {
-    //render of chunks each direction
-    public const int RENDER_DISTANCE = 1; //16
+
+    #region parameter goals for the game
+    // RENDER_DISTANCE = 16
+    // WIDTH and DEPTH = 40
+    // HEIGHT = 16
+    #endregion
+
+    //don't think this has to be odd because its more of an offset from center
+    public const int RENDER_DISTANCE = 2;
     public const int CENTERED_WIDTH = (2 * RENDER_DISTANCE) + 1;
     public const int CENTERED_HEIGHT = (2 * RENDER_DISTANCE) + 1;
     public const int CENTERED_DEPTH = (2 * RENDER_DISTANCE) + 1;
     
-    public const int WIDTH =  CENTERED_WIDTH  + 0;  //40  
-    public const int DEPTH =  CENTERED_DEPTH  + 0;  //40
-    public const int HEIGHT = CENTERED_HEIGHT + 0;  //16
+    //use odd numbers for best results
+    public const int WIDTH =  7;   
+    public const int DEPTH =  7;  
+    public const int HEIGHT = 7;  
 
-    //noise
-    //public const int NOISE_WIDTH =  ((2 * (2 * RENDER_DISTANCE)) + 1) * Chunk.WIDTH + 1;
-    //public const int NOISE_HEIGHT = ((2 * (2 * RENDER_DISTANCE)) + 1) * Chunk.HEIGHT + 1;
-    //public const int NOISE_DEPTH =  ((2 * (2 * RENDER_DISTANCE)) + 1) * Chunk.DEPTH + 1;
+    //noise mang
     public const int NOISE_WIDTH = WIDTH * Chunk.WIDTH + 1;
     public const int NOISE_DEPTH = DEPTH * Chunk.DEPTH + 1;
     public const int NOISE_HEIGHT = HEIGHT * Chunk.HEIGHT + 1;
@@ -39,7 +44,7 @@ public class MapTerrain
     public static void Generate()
     {
         playerPosition = GameObject.FindGameObjectWithTag("Player").transform.position;
-        GenerateHeightMap();
+        GenerateNoise();
     }
     public static void Update()
     {
@@ -72,7 +77,7 @@ public class MapTerrain
     #endregion
 
     #region HELPERS
-    private static void GenerateHeightMap()
+    private static void GenerateNoise()
     {
         var simplexNoise = new OpenSimplexNoise();
 
@@ -113,49 +118,49 @@ public class MapTerrain
                     #endregion
 
                     #region example with overhangs
-                    //var octaves = 3;
-                    //var deltaFrequency = 0.5;
-                    //var deltaAmplitude = 2.0;
-                    //var deltaScale = 1.0;
+                    var octaves = 3;
+                    var deltaFrequency = 0.5;
+                    var deltaAmplitude = 2.0;
+                    var deltaScale = 1.0;
 
-                    //var frequency = 2.0;
-                    //var amplitude = 10.0;
-                    //var scale = 5.0;
+                    var frequency = 2.0;
+                    var amplitude = 10.0;
+                    var scale = 5.0;
 
-                    //double sample = 0.0;
-                    //for (int i = 0; i < octaves; i++)
-                    //{
+                    double sample = 0.0;
+                    for (int i = 0; i < octaves; i++)
+                    {
 
-                    //    sample += simplexNoise.eval(((double)x / (double)Chunk.WIDTH) * frequency,
-                    //                                ((double)y / (double)Chunk.HEIGHT) * frequency,
-                    //                                ((double)z / (double)Chunk.DEPTH) * frequency) * amplitude * scale - y * 3f;
+                        sample += simplexNoise.eval(((double)x / (double)Chunk.WIDTH) * frequency,
+                                                    ((double)y / (double)Chunk.HEIGHT) * frequency,
+                                                    ((double)z / (double)Chunk.DEPTH) * frequency) * amplitude * scale - y * 3f;
 
-                    //    frequency *= deltaFrequency;
-                    //    amplitude *= deltaAmplitude;
-                    //    scale *= deltaScale;
-                    //}
-
-                    //if (sample < min) min = sample;
-                    //if (sample > max) max = sample;
-
-                    ////var index = x + y * NOISE_WIDTH + z * NOISE_HEIGHT * NOISE_WIDTH;
-                    ////noise[index] = sample;
-                    //noise[x, y, z] = sample;
-
-                    #endregion
-
-                    #region giant cube example
-                    double sample = 1.0;
-
-                    if (x == 0 || x == NOISE_WIDTH - 1 || y == 0 || y == NOISE_HEIGHT - 1 || z == 0 || z == NOISE_DEPTH - 1)
-                        sample = -1.0;
+                        frequency *= deltaFrequency;
+                        amplitude *= deltaAmplitude;
+                        scale *= deltaScale;
+                    }
 
                     if (sample < min) min = sample;
                     if (sample > max) max = sample;
 
-                    var index = x + y * NOISE_WIDTH + z * NOISE_HEIGHT * NOISE_WIDTH;
+                    //var index = x + y * NOISE_WIDTH + z * NOISE_HEIGHT * NOISE_WIDTH;
                     //noise[index] = sample;
                     noise[x, y, z] = sample;
+
+                    #endregion
+
+                    #region giant cube example
+                    //double sample = 1.0;
+
+                    //if (x == 0 || x == NOISE_WIDTH - 1 || y == 0 || y == NOISE_HEIGHT - 1 || z == 0 || z == NOISE_DEPTH - 1)
+                    //    sample = -1.0;
+
+                    //if (sample < min) min = sample;
+                    //if (sample > max) max = sample;
+
+                    //var index = x + y * NOISE_WIDTH + z * NOISE_HEIGHT * NOISE_WIDTH;
+                    ////noise[index] = sample;
+                    //noise[x, y, z] = sample;
                     #endregion
 
                     #region flat
