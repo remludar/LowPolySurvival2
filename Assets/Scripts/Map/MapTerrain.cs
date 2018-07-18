@@ -12,15 +12,15 @@ public class MapTerrain
     #endregion
 
     //don't think this has to be odd because its more of an offset from center
-    public const int RENDER_DISTANCE = 2;
+    public const int RENDER_DISTANCE = 3;
     public const int CENTERED_WIDTH = (2 * RENDER_DISTANCE) + 1;
     public const int CENTERED_HEIGHT = (2 * RENDER_DISTANCE) + 1;
     public const int CENTERED_DEPTH = (2 * RENDER_DISTANCE) + 1;
     
     //use odd numbers for best results
-    public const int WIDTH =  7;   
-    public const int DEPTH =  7;  
-    public const int HEIGHT = 7;  
+    public const int WIDTH =  5;   
+    public const int DEPTH =  5;  
+    public const int HEIGHT = 5;  
 
     //noise mang
     public const int NOISE_WIDTH = WIDTH * Chunk.WIDTH + 1;
@@ -34,7 +34,9 @@ public class MapTerrain
     private static double max = double.MinValue;
     private static int normalizeValue = 1;
 
-    private static Dictionary<Vector3, Chunk> activeChunks = new Dictionary<Vector3, Chunk>();
+    private static Dictionary<Vector3, Chunk> allChunks = new Dictionary<Vector3, Chunk>();
+    private static Dictionary<Vector3, Chunk> loadedChunks = new Dictionary<Vector3, Chunk>();
+    private static Dictionary<Vector3, Chunk> unloadedChunks = new Dictionary<Vector3, Chunk>();
     private static Vector3 playerPosition;
 
     //debug stuff
@@ -49,6 +51,7 @@ public class MapTerrain
     public static void Update()
     {
         GenerateChunks();
+        UnloadChunks();
         RenderChunks();
     }
     #endregion
@@ -118,65 +121,78 @@ public class MapTerrain
                     #endregion
 
                     #region example with overhangs
-                    var octaves = 3;
-                    var deltaFrequency = 0.5;
-                    var deltaAmplitude = 2.0;
-                    var deltaScale = 1.0;
+                    //var octaves = 3;
+                    //var deltaFrequency = 0.5;
+                    //var deltaAmplitude = 2.0;
+                    //var deltaScale = 1.0;
 
-                    var frequency = 2.0;
-                    var amplitude = 10.0;
-                    var scale = 5.0;
+                    //var frequency = 2.0;
+                    //var amplitude = 10.0;
+                    //var scale = 5.0;
 
-                    double sample = 0.0;
-                    for (int i = 0; i < octaves; i++)
-                    {
-
-                        sample += simplexNoise.eval(((double)x / (double)Chunk.WIDTH) * frequency,
-                                                    ((double)y / (double)Chunk.HEIGHT) * frequency,
-                                                    ((double)z / (double)Chunk.DEPTH) * frequency) * amplitude * scale - y * 3f;
-
-                        frequency *= deltaFrequency;
-                        amplitude *= deltaAmplitude;
-                        scale *= deltaScale;
-                    }
-
-                    if (sample < min) min = sample;
-                    if (sample > max) max = sample;
-
-                    //var index = x + y * NOISE_WIDTH + z * NOISE_HEIGHT * NOISE_WIDTH;
-                    //noise[index] = sample;
-                    noise[x, y, z] = sample;
-
-                    #endregion
-
-                    #region giant cube example
-                    //double sample = 1.0;
-
-                    //if (x == 0 || x == NOISE_WIDTH - 1 || y == 0 || y == NOISE_HEIGHT - 1 || z == 0 || z == NOISE_DEPTH - 1)
-                    //    sample = -1.0;
-
-                    //if (sample < min) min = sample;
-                    //if (sample > max) max = sample;
-
-                    //var index = x + y * NOISE_WIDTH + z * NOISE_HEIGHT * NOISE_WIDTH;
-                    ////noise[index] = sample;
-                    //noise[x, y, z] = sample;
-                    #endregion
-
-                    #region flat
-                    //double sample = -1.0;
-
-                    ////if (y <= (HEIGHT / 2) * Chunk.HEIGHT)
-                    //if (y < 17)
+                    //double sample = 0.0;
+                    //for (int i = 0; i < octaves; i++)
                     //{
-                    //    sample = 1.0;
+
+                    //    sample += simplexNoise.eval(((double)x / (double)Chunk.WIDTH) * frequency,
+                    //                                ((double)y / (double)Chunk.HEIGHT) * frequency,
+                    //                                ((double)z / (double)Chunk.DEPTH) * frequency) * amplitude * scale - y * 3f;
+
+                    //    frequency *= deltaFrequency;
+                    //    amplitude *= deltaAmplitude;
+                    //    scale *= deltaScale;
                     //}
 
                     //if (sample < min) min = sample;
                     //if (sample > max) max = sample;
 
-                    //var index = x + y * NOISE_WIDTH + z * NOISE_HEIGHT * NOISE_WIDTH;
+                    ////var index = x + y * NOISE_WIDTH + z * NOISE_HEIGHT * NOISE_WIDTH;
+                    ////noise[index] = sample;
+                    //noise[x, y, z] = sample;
+
+                    #endregion
+
+                    #region giant cube example
+                    double sample = 1.0;
+
+                    if (x == 0 || x == NOISE_WIDTH - 1 || y == 0 || y == NOISE_HEIGHT - 1 || z == 0 || z == NOISE_DEPTH - 1)
+                        sample = -1.0;
+
+                    if (sample < min) min = sample;
+                    if (sample > max) max = sample;
+
+                    var index = x + y * NOISE_WIDTH + z * NOISE_HEIGHT * NOISE_WIDTH;
                     //noise[index] = sample;
+                    noise[x, y, z] = sample;
+                    #endregion
+
+                    #region another 3D example
+                    //var octaves = 3;
+                    //var deltaFrequency = 0.5;
+                    //var deltaAmplitude = 2.0;
+                    //var deltaScale = 1.0;
+
+                    //var frequency = 3.0;
+                    //var amplitude = 10.0;
+                    //var scale = 5.0;
+
+                    //double sample = 0.0;
+                    //for (int i = 0; i < octaves; i++)
+                    //{
+
+                    //    sample += simplexNoise.eval(((double)x / (double)Chunk.WIDTH) * frequency,
+                    //                                ((double)y / (double)Chunk.HEIGHT) * frequency,
+                    //                                ((double)z / (double)Chunk.DEPTH) * frequency) * amplitude * scale - y * 3f;
+
+                    //    frequency *= deltaFrequency;
+                    //    amplitude *= deltaAmplitude;
+                    //    scale *= deltaScale;
+                    //}
+
+                    //if (sample < min) min = sample;
+                    //if (sample > max) max = sample;
+
+                    //noise[x, y, z] = sample;
                     #endregion  
                 }
             }
@@ -225,15 +241,34 @@ public class MapTerrain
                 var localOffset = new Vector3(x, y, z);
                 var newChunkPosition = GetNewChunkPosition(normalizedPlayerPosition, localOffset);
                 var newChunkNoisePosition = GetNewChunkNoisePosition(normalizedPlayerPosition, localOffset);
+                Chunk existingChunk; 
 
-                if (!ChunkExists(newChunkPosition) && NoiseExists(newChunkNoisePosition))
+                //If the chunk doesn't exist and should, create it
+                if (!ChunkExists(newChunkPosition, out existingChunk))
                 {
-                    var go = new GameObject(newChunkPosition.ToString());
-                    go.transform.position = newChunkPosition;
+                    if (NoiseExists(newChunkNoisePosition))
+                    {
+                        var go = new GameObject(newChunkPosition.ToString());
+                        go.transform.position = newChunkPosition;
 
-                    var chunk = new Chunk(go, newChunkNoisePosition);
-                    activeChunks.Add(go.transform.position, chunk);
-                    chunk.GenerateTerrain();
+                        var chunk = new Chunk(go, newChunkNoisePosition);
+                        allChunks.Add(go.transform.position, chunk);
+                        loadedChunks.Add(go.transform.position, chunk);
+                        chunk.GenerateTerrain();
+                    }
+                }
+                //If the chunk does exist and isn't loaded, load it
+                else
+                {
+                    Chunk tmpChunk;
+                    if(!loadedChunks.TryGetValue(newChunkPosition, out tmpChunk))
+                    {
+                        unloadedChunks.TryGetValue(newChunkPosition, out tmpChunk);
+                        tmpChunk.go.SetActive(true);
+                        unloadedChunks.Remove(newChunkPosition);
+                        loadedChunks.Add(newChunkPosition, tmpChunk);
+                    }
+                    
                 }
 
                 if ((x == z) ||
@@ -280,10 +315,9 @@ public class MapTerrain
 
         return new Vector3(noiseX, noiseY, noiseZ);
     }
-    private static bool ChunkExists(Vector3 position)
+    private static bool ChunkExists(Vector3 position, out Chunk existingChunk)
     {
-        Chunk tmpChunk;
-        return activeChunks.TryGetValue(position, out tmpChunk);
+        return allChunks.TryGetValue(position, out existingChunk);
     }
     private static bool NoiseExists(Vector3 position)
     {
@@ -292,9 +326,34 @@ public class MapTerrain
         bool zInBounds = position.z < noise.GetLength(2) - 1 && position.z >= 0;
         return xInBounds && yInBounds && zInBounds;
     }
+    private static void UnloadChunks()
+    {
+        //Add any chunks beyond the render distance which are loaded to the unloaded chunks and unload them.
+        foreach(var chunk in allChunks)
+        {
+            var xDist = Mathf.Abs(chunk.Key.x / Chunk.WIDTH - playerPosition.x / Chunk.WIDTH);
+            var yDist = Mathf.Abs(chunk.Key.y / Chunk.HEIGHT - playerPosition.y / Chunk.HEIGHT);
+            var zDist = Mathf.Abs(chunk.Key.z / Chunk.DEPTH - playerPosition.z / Chunk.DEPTH);
+            if (xDist > RENDER_DISTANCE || yDist > RENDER_DISTANCE || zDist > RENDER_DISTANCE)
+            {
+                Chunk tmpChunk;
+                if (loadedChunks.TryGetValue(chunk.Key, out tmpChunk))
+                {
+                    loadedChunks.Remove(chunk.Key);
+                    unloadedChunks.Add(chunk.Key, chunk.Value);
+                }
+                
+            }
+        }
+
+        foreach(var chunk in unloadedChunks)
+        {
+            chunk.Value.go.SetActive(false);
+        }
+    }
     private static void RenderChunks()
     {
-        foreach(var kvp in activeChunks)
+        foreach(var kvp in loadedChunks)
         {
             if(kvp.Value.canRender)
                 kvp.Value.Render();
